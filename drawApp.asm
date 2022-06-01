@@ -18,13 +18,6 @@ section '.data' data readable writeable
   panel RECT 0,0,500,300
   rect RECT 220,120,280,180
 
-  puntos POINT 3
-  p1 POINT 100,100
-  p2 POINT 50,150
-  p3 POINT 50,50
-  p4 POINT 0,0
-
-
  ;BOTONES
   typeBoton TCHAR 'BUTTON',0
   labelCirculo TCHAR 'Circle',0
@@ -53,15 +46,6 @@ section '.data' data readable writeable
 section '.text' code readable executable
 
   start:
-    push ebx
-    mov ebx, [p1]
-    mov [puntos],ebx
-    mov ebx, [p2]
-    mov [puntos+1],ebx
-    mov ebx, [p3]
-    mov [puntos+2],ebx
-    pop ebx
-
     invoke GetModuleHandle,0
     mov [wc.hInstance], eax
     invoke LoadIcon,0,IDI_APPLICATION
