@@ -7,6 +7,7 @@ idCirculo equ 1000
 idCuadrado equ 1001
 idTriangulo equ 1002
 idClear equ 1003
+idClose equ 1004
 
 xV equ 200
 yV equ 100
@@ -15,7 +16,7 @@ hV equ 400
 
 section '.data' data readable writeable
   lapiz PAINTSTRUCT
-  panel RECT 0,0,500,300
+  panel RECT 15,15,480,300
   rect RECT 220,120,280,180
 
  ;BOTONES
@@ -24,6 +25,7 @@ section '.data' data readable writeable
   labelCuadrado TCHAR 'Square',0
   labelTriangulo TCHAR 'Triangle',0
   labelClear TCHAR 'Clear',0
+  labelClose TCHAR 'Exit',0
 
   _error TCHAR 'Startup failed.',0
 
@@ -88,6 +90,8 @@ proc WindProc hwnd, msg, wParam, lParam
   je .wcommand
   cmp [msg], WM_KEYDOWN
   je .capturarTecla
+  cmp [msg], WM_CLOSE
+  je .wclose
 
   .defwndproc:
     invoke  DefWindowProc,[hwnd],[msg],[wParam],[lParam]
@@ -106,6 +110,8 @@ proc WindProc hwnd, msg, wParam, lParam
     je .drawTriangulo
      cmp [wParam], idClear
     je .clear
+    cmp [wParam], idClose
+    je .close
     jmp .finish
 
     .clear:
@@ -132,6 +138,10 @@ proc WindProc hwnd, msg, wParam, lParam
       mov [number], 3
       stdcall Repaint,[hwnd]
       invoke SetFocus,[hwnd]
+      jmp .finish
+    
+    .close:
+      invoke SendMessage,[hwnd],WM_CLOSE,0,0
       jmp .finish
 
   .capturarTecla:
@@ -163,6 +173,10 @@ proc WindProc hwnd, msg, wParam, lParam
 
   .paint:
     stdcall Draw,[hwnd]
+    jmp .finish
+
+  .wclose:
+    invoke  ExitProcess,0
     jmp .finish
 
   .wmdestroy:
@@ -211,6 +225,9 @@ proc CrearBotones hwnd
 	    WS_VISIBLE+WS_CHILD,210,320,80,30,[hwnd],idTriangulo,[wc.hInstance],NULL
   invoke CreateWindowEx,0,typeBoton,labelClear,\
 	    WS_VISIBLE+WS_CHILD,300,320,80,30,[hwnd],idClear,[wc.hInstance],NULL
+
+  invoke CreateWindowEx,0,typeBoton,labelClose,\
+	    WS_VISIBLE+WS_CHILD,410,320,70,30,[hwnd],idClose,[wc.hInstance],NULL
 ret
 endp
 
@@ -225,7 +242,7 @@ endp
 proc Draw hwnd
   invoke BeginPaint,[hwnd], lapiz
   mov [hdc], eax
-  invoke CreatePen,PS_SOLID,1,00D0DE9Eh
+  invoke CreatePen,PS_SOLID,1,00000000h
   mov [hPen], eax
   invoke SelectObject,[hdc],[hPen]
   mov [hPenOld], eax
