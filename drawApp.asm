@@ -36,7 +36,7 @@ section '.data' data readable writeable
  ; VENTANA
   title TCHAR 'FRAME',0
   nameFrame TCHAR 'Frame',0
-  wc WNDCLASS 0,WindProc,0,0,NULL,NULL,NULL,COLOR_BTNFACE,NULL,nameFrame
+  wc WNDCLASS 0,WindProc,0,0,NULL,NULL,NULL,COLOR_MENU,NULL,nameFrame
 
   hdc rd 1
   hPen rd 1
@@ -135,6 +135,7 @@ proc WindProc hwnd, msg, wParam, lParam
 
     .drawTriangulo:
       stdcall ResetRect
+      add [rect.left], 25
       mov [number], 3
       stdcall Repaint,[hwnd]
       invoke SetFocus,[hwnd]
@@ -218,13 +219,13 @@ endp
 
 proc CrearBotones hwnd
   invoke CreateWindowEx,0,typeBoton,labelCirculo,\
-	    WS_VISIBLE+WS_CHILD,30,320,80,30,[hwnd],idCirculo,[wc.hInstance],NULL
+	    WS_VISIBLE+WS_CHILD,15,320,70,30,[hwnd],idCirculo,[wc.hInstance],NULL
   invoke CreateWindowEx,0,typeBoton,labelCuadrado,\
-	    WS_VISIBLE+WS_CHILD,120,320,80,30,[hwnd],idCuadrado,[wc.hInstance],NULL
+	    WS_VISIBLE+WS_CHILD,95,320,70,30,[hwnd],idCuadrado,[wc.hInstance],NULL
   invoke CreateWindowEx,0,typeBoton,labelTriangulo,\
-	    WS_VISIBLE+WS_CHILD,210,320,80,30,[hwnd],idTriangulo,[wc.hInstance],NULL
+	    WS_VISIBLE+WS_CHILD,175,320,70,30,[hwnd],idTriangulo,[wc.hInstance],NULL
   invoke CreateWindowEx,0,typeBoton,labelClear,\
-	    WS_VISIBLE+WS_CHILD,300,320,80,30,[hwnd],idClear,[wc.hInstance],NULL
+	    WS_VISIBLE+WS_CHILD,255,320,70,30,[hwnd],idClear,[wc.hInstance],NULL
 
   invoke CreateWindowEx,0,typeBoton,labelClose,\
 	    WS_VISIBLE+WS_CHILD,410,320,70,30,[hwnd],idClose,[wc.hInstance],NULL
@@ -284,13 +285,20 @@ endp
 proc Triangle
   invoke BeginPath,[lapiz.hdc]
   invoke MoveToEx,[lapiz.hdc],[rect.left],[rect.top],0
-  sub [rect.left],50
+  sub [rect.left],25
   invoke LineTo,[lapiz.hdc],[rect.left],[rect.bottom]
   invoke LineTo,[lapiz.hdc],[rect.right],[rect.bottom]
-  add [rect.left],50
+  add [rect.left],25
   invoke LineTo,[lapiz.hdc],[rect.left],[rect.top]
   invoke EndPath,[lapiz.hdc]
   invoke FillPath,[lapiz.hdc]
+
+  invoke MoveToEx,[lapiz.hdc],[rect.left],[rect.top],0
+  sub [rect.left],25
+  invoke LineTo,[lapiz.hdc],[rect.left],[rect.bottom]
+  invoke LineTo,[lapiz.hdc],[rect.right],[rect.bottom]
+  add [rect.left],25
+  invoke LineTo,[lapiz.hdc],[rect.left],[rect.top]
 ret
 endp
 
