@@ -135,8 +135,16 @@ proc WindProc hwnd, msg, wParam, lParam
 
     .drawTriangulo:
       stdcall ResetRect
+      push eax ecx
+      mov eax, 0
+      mov edx, 0
+      mov eax, [rect.right]
+      sub eax, [rect.left]
+      mov ecx, 2
+      div ecx
       add [rect.left], 25
       mov [number], 3
+      pop ecx eax
       stdcall Repaint,[hwnd]
       invoke SetFocus,[hwnd]
       jmp .finish
@@ -283,22 +291,29 @@ ret
 endp
 
 proc Triangle
+  push ebx
+  mov ebx, 0
+  mov ebx, [rect.right]
+  sub ebx, [rect.left]
+
   invoke BeginPath,[lapiz.hdc]
   invoke MoveToEx,[lapiz.hdc],[rect.left],[rect.top],0
-  sub [rect.left],25
+  sub [rect.left],ebx
   invoke LineTo,[lapiz.hdc],[rect.left],[rect.bottom]
   invoke LineTo,[lapiz.hdc],[rect.right],[rect.bottom]
-  add [rect.left],25
+  add [rect.left],ebx
   invoke LineTo,[lapiz.hdc],[rect.left],[rect.top]
   invoke EndPath,[lapiz.hdc]
   invoke FillPath,[lapiz.hdc]
 
   invoke MoveToEx,[lapiz.hdc],[rect.left],[rect.top],0
-  sub [rect.left],25
+  sub [rect.left],ebx
   invoke LineTo,[lapiz.hdc],[rect.left],[rect.bottom]
   invoke LineTo,[lapiz.hdc],[rect.right],[rect.bottom]
-  add [rect.left],25
+  add [rect.left],ebx
   invoke LineTo,[lapiz.hdc],[rect.left],[rect.top]
+
+  pop ebx
 ret
 endp
 
