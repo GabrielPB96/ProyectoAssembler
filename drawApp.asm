@@ -8,6 +8,8 @@ idCuadrado equ 1001
 idTriangulo equ 1002
 idClear equ 1003
 idClose equ 1004
+idMas2 equ 1005
+idMenos2 equ 1006
 
 xV equ 200
 yV equ 100
@@ -26,6 +28,8 @@ section '.data' data readable writeable
   labelTriangulo TCHAR 'Triangle',0
   labelClear TCHAR 'Clear',0
   labelClose TCHAR 'Exit',0
+  labelMas2 TCHAR '+',0
+  labelMenos2 TCHAR '-',0
 
   _error TCHAR 'Startup failed.',0
 
@@ -112,6 +116,10 @@ proc WindProc hwnd, msg, wParam, lParam
     je .clear
     cmp [wParam], idClose
     je .close
+    cmp [wParam], idMas2
+    je .mas2
+    cmp [wParam], idMenos2
+    je .menos2
     jmp .finish
 
     .clear:
@@ -145,6 +153,18 @@ proc WindProc hwnd, msg, wParam, lParam
       add [rect.left], 25
       mov [number], 3
       pop ecx eax
+      stdcall Repaint,[hwnd]
+      invoke SetFocus,[hwnd]
+      jmp .finish
+
+    .mas2:
+      stdcall MAS2
+      stdcall Repaint,[hwnd]
+      invoke SetFocus,[hwnd]
+      jmp .finish
+
+    .menos2:
+      stdcall MENOS2
       stdcall Repaint,[hwnd]
       invoke SetFocus,[hwnd]
       jmp .finish
@@ -195,6 +215,22 @@ proc WindProc hwnd, msg, wParam, lParam
 ret
 endp
 
+proc MAS2
+  add [rect.right], 2
+  add [rect.bottom], 2
+  sub [rect.left], 2
+  sub [rect.top], 2
+ret
+endp
+
+proc MENOS2
+  sub [rect.right], 2
+  sub [rect.bottom], 2
+  add [rect.left], 2
+  add [rect.top], 2
+ret
+endp
+
 proc MoveTop
   sub [rect.top], 5
   sub [rect.bottom], 5
@@ -235,8 +271,13 @@ proc CrearBotones hwnd
   invoke CreateWindowEx,0,typeBoton,labelClear,\
 	    WS_VISIBLE+WS_CHILD,255,320,70,30,[hwnd],idClear,[wc.hInstance],NULL
 
+  invoke CreateWindowEx,0,typeBoton,labelMas2,\
+	    WS_VISIBLE+WS_CHILD,335,320,30,30,[hwnd],idMas2,[wc.hInstance],NULL
+  invoke CreateWindowEx,0,typeBoton,labelMenos2,\
+	    WS_VISIBLE+WS_CHILD,370,320,30,30,[hwnd],idMenos2,[wc.hInstance],NULL
+
   invoke CreateWindowEx,0,typeBoton,labelClose,\
-	    WS_VISIBLE+WS_CHILD,410,320,70,30,[hwnd],idClose,[wc.hInstance],NULL
+	    WS_VISIBLE+WS_CHILD,430,320,50,30,[hwnd],idClose,[wc.hInstance],NULL
 ret
 endp
 
